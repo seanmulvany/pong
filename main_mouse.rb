@@ -127,24 +127,26 @@ class Game < Window
     @container = []
   end
 
+
   def needs_cursor?
-    true
+    false
   end
 
   def update
     @container.flatten!
     @container.slice! -10..-1
     @container << mouse_y * 10000
-
+     p @container
 
     if @state == :in_play
 
 
         case when @container.count >= 1
-        if @container[-1].to_i < @container[-2].to_i
+        if @container[-1].to_i < @container[-2].to_i || @container[-1].to_i == 0
         @player_1.move_up
 
-        elsif @container[-1].to_i > @container[-2].to_i
+
+        elsif @container[-1].to_i > @container[-2].to_i || @container[-1].to_i == 7991111
         @player_1.move_down
 
       end
