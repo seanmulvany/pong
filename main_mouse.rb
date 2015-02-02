@@ -139,18 +139,15 @@ class Game < Window
 
     if @state == :in_play
 
-      if button_down?(KbUp)
-      #case when @container.count >= 1
-      #if @container[-1].to_i < @container[-2].to_i
+
+        case when @container.count >= 1
+        if @container[-1].to_i < @container[-2].to_i
         @player_1.move_up
 
-        end
-
-      if button_down?(KbDown)
-      #elsif @container[-1].to_i > @container[-2].to_i
+        elsif @container[-1].to_i > @container[-2].to_i
         @player_1.move_down
 
-
+      end
       end
 
 
