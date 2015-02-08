@@ -49,6 +49,11 @@ class Ball
 
   end
 
+  def switch_direction_slightly(place_on_paddle)
+    @vx *= -1
+    @vy = (place_on_paddle / 10) + 1
+  end
+
 
   def reset
     @x = @initial_x
@@ -125,6 +130,7 @@ class Game < Window
     @score_card = ScoreCard.new(self)
     @state = :in_play
     @container = []
+    @container2 = []
   end
 
 
@@ -153,10 +159,35 @@ class Game < Window
       end
 
 
-      if @player_1.hits?(@ball)
-        @ball.switch_direction(@ball.y - @player_1.y)
-        @player_1.increment_score
-      end
+        if @player_1.hits?(@ball)
+
+          @container2 << @player_1.y
+          @container2.slice! -50..-1
+          p @container2
+=begin
+          case when @container2.count == 0
+                 @ball.switch_direction(@ball.y - @player_1.y)
+                 @player_1.increment_score
+          end
+
+          case when @container2.count == 1
+                 @ball.switch_direction(@ball.y - @player_1.y)
+                 @player_1.increment_score
+          end
+=end
+          case when
+                 if @container2[-1] == @container2[-2]
+                   @ball.switch_direction_slightly(@ball.y  - @player_1.y)
+                   #@player_1.move_slightly
+
+                 else
+                   @ball.switch_direction(@ball.y - @player_1.y)
+                   @player_1.increment_score
+                 end
+
+          end
+
+        end
 
 
       if @ball.x < 0
