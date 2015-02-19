@@ -21,7 +21,7 @@ class Ball
     @initial_y = Game::HEIGHT/2
     reset
     @vx = 10 #ball speed on x axis
-    @vy = 1
+    @vy = 0
   end
 
   def update
@@ -33,6 +33,8 @@ class Ball
       @vx *= -1
     end
   end
+
+
 
 
   def draw
@@ -56,11 +58,17 @@ class Ball
   end
 
 
-
   def reset
     @x = @initial_x
     @y = @initial_y
   end
+
+  def stationary
+    @x = @initial_x
+    @y = @initial_y
+    @vx = 0
+  end
+
 end
 
 class Player
@@ -141,8 +149,8 @@ class Game < Window
 
   def update
     @container.flatten!
-    @container.slice! -10..-1
-    @container << mouse_y * 10000
+
+    @container << mouse_y * 100
 
 
     if @state == :in_play
@@ -165,8 +173,6 @@ class Game < Window
       if @player_1.hits?(@ball)
 
         @container2 << @player_1.y
-        @container2.slice! -50..-1
-        p @container2
 
 =begin
 
@@ -207,17 +213,21 @@ class Game < Window
 
 
       if @ball.x < 0
+        @ball.reset
         @player_2.increment_score
-        @state = :stopped
+        #@state = :stopped
+        GC.start
+        sleep 1.5
+
       end
 
       @ball.update
-    elsif @state == :stopped
-      if button_down?(KbSpace)
-        @players.each(&:reset)
-        @ball.reset
-        @state = :in_play
-      end
+    #elsif @state == :stopped
+     # if button_down?(KbSpace)
+        #@players.each(&:reset)
+        #@ball.reset
+        #@state = :in_play
+     #end
     end
   end
 

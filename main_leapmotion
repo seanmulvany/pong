@@ -25,7 +25,7 @@ class Ball
     @initial_y = Game::HEIGHT/2
     reset
     @vx = 10 #ball speed on x axix
-    @vy = 1
+    @vy = 0
   end
 
   def update
@@ -126,7 +126,7 @@ class Game < Window
   HEIGHT = 800
 
   def initialize
-    super(WIDTH, HEIGHT, false)
+    super(WIDTH, HEIGHT, true)
     @ball = Ball.new(self)
     @player_1 = Player.new(self, 40, HEIGHT/2)
     @player_2 = Player.new(self, 0, HEIGHT/2)
@@ -151,8 +151,7 @@ class Game < Window
   def update
     data_stream
     @container.flatten!
-    @container.slice! -100..-1
-    p @container
+
     if @state == :in_play
 
 
@@ -171,9 +170,10 @@ class Game < Window
       if @player_1.hits?(@ball)
 
         @container2 << @player_1.y
-        @container2.slice! -50..-1
-        p @container2
-=begin
+        @container2
+
+        p GC.stat
+
           case when @container2.count == 0
                  @ball.switch_direction(@ball.y - @player_1.y)
                  @player_1.increment_score
@@ -183,7 +183,7 @@ class Game < Window
                  @ball.switch_direction(@ball.y - @player_1.y)
                  @player_1.increment_score
           end
-=end
+
         case when
         if @container2[-1] == @container2[-2]
           @ball.switch_direction_slightly(@ball.y  - @player_1.y)
@@ -201,16 +201,19 @@ class Game < Window
 
       if @ball.x < 0
         @player_2.increment_score
-        @state = :stopped
+        @ball.reset
+        GC.start
+        #@state = :stopped
+        sleep 1.5
       end
 
       @ball.update
-    elsif @state == :stopped
-      if button_down?(KbSpace)
-        @players.each(&:reset)
-        @ball.reset
-        @state = :in_play
-      end
+    #elsif @state == :stopped
+      #if button_down?(KbSpace)
+        #@players.each(&:reset)
+        #@ball.reset
+       # @state = :in_play
+      #end
     end
   end
 

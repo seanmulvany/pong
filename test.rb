@@ -25,12 +25,23 @@ end
 
 def on_frame(*args)
 
-array = []
-frame = args[1]
-   frame
 
+frame = args[1]
+frame
+
+  frame.pointables.each do |thing|
+    p thing.stabilizedTipPosition[1]
+    case when element
+           read = File.open('console.out', 'w')
+           read << thing.stabilizedTipPosition[1]
+           read.close
+
+    end
+  end
+
+=begin
   frame.hands.each do |element|
-  p element.stabilizedPalmPosition[1]
+  element.stabilizedPalmPosition[1]
     case when element
            read = File.open('console.out', 'w')
             read << element.stabilizedPalmPosition[1]
@@ -38,7 +49,8 @@ frame = args[1]
 
     end
 
-    end
+  end
+=end
 
 end
 
