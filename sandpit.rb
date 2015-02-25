@@ -135,8 +135,17 @@ class Ball2 < Ball
     @initial_x = Game::WIDTH/2
     @initial_y = Game::HEIGHT/2
     reset
-    @vx = 10 #ball speed on x axis
+    @vx = 14 #ball speed on x axis
     @vy = 0
+  end
+
+  def draw
+    @window.draw_quad(
+        @x-5, @y-5, Color::BLACK,
+        @x+5, @y-5, Color::BLACK,
+        @x+5, @y+5, Color::BLACK,
+        @x-5, @y+5, Color::BLACK,
+    )
   end
 
 end
@@ -192,33 +201,11 @@ class Game < Window
         @container2.slice! -50..-1
         p @container2
 
-=begin
 
-        case when @container2.count == 0
-               @ball.switch_direction(@ball.y - @player_1.y)
-               @player_1.increment_score
-        end
-
-        case when @container2.count == 1
-               @ball.switch_direction(@ball.y - @player_1.y)
-               @player_1.increment_score
-        end
-        case when @container2.count == 2
-            if @container2[-1] == @container2[-2]
-              @ball.switch_direction_slightly(@ball.y  - @player_1.y)
-              #@player_1.move_slightly
-
-            else
-              @ball.switch_direction(@ball.y - @player_1.y)
-              @player_1.increment_score
-            end
-            end
-
-=end
         case when
         if @container2[-1] == @container2[-2]
           @ball.switch_direction_slightly(@ball.y  - @player_1.y)
-          #@player_1.move_slightly
+
 
         else
           @ball.switch_direction(@ball.y - @player_1.y)
@@ -231,17 +218,20 @@ class Game < Window
 
 
       if @ball.x < 0
-       @ball2.update
-        #@player_2.increment_score
-        #@state = :stopped
+        @ball2.update
       end
 
-      if @ball2.x < 0
-        @ball.reset
-        @ball.update
+      case
+        when @ball2.x < 1
+          @ball.reset
+          @ball.update
+          @ball2.reset
       end
+
+      #end
 
       @ball.update
+
       #elsif @state == :stopped
       # if button_down?(KbSpace)
       #@players.each(&:reset)
@@ -259,6 +249,5 @@ class Game < Window
     #@player_2.draw
   end
 
-
-end
+  end
 Game.new.show

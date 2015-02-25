@@ -127,6 +127,30 @@ class Player
 
 end
 
+
+class Ball2 < Ball
+
+  def initialize(window)
+    @window = window
+    @initial_x = Game::WIDTH/2
+    @initial_y = Game::HEIGHT/2
+    reset
+    @vx = 14 #ball speed on x axis
+    @vy = 0
+  end
+
+  def draw
+    @window.draw_quad(
+        @x-5, @y-5, Color::BLACK,
+        @x+5, @y-5, Color::BLACK,
+        @x+5, @y+5, Color::BLACK,
+        @x-5, @y+5, Color::BLACK,
+    )
+  end
+
+end
+
+
 class Game < Window
   WIDTH = 1200
   HEIGHT = 800
@@ -134,6 +158,7 @@ class Game < Window
   def initialize
     super(WIDTH, HEIGHT, true)
     @ball = Ball.new(self)
+    @ball2 = Ball2.new(self)
     @player_1 = Player.new(self, 40, HEIGHT/2)
     @player_2 = Player.new(self, 0, HEIGHT/2)
     @players = [@player_1, @player_2]
@@ -148,22 +173,20 @@ class Game < Window
   end
 
   def update
-    @container.flatten!
 
-    @container << mouse_y * 100
 
 
     if @state == :in_play
 
       if button_down?(KbUp)
-      #case when @container.count >= 1
-      #if @container[-1].to_i < @container[-2].to_i
+        #case when @container.count >= 1
+        #if @container[-1].to_i < @container[-2].to_i
         @player_1.move_up
 
-        end
+      end
 
       if button_down?(KbDown)
-      #elsif @container[-1].to_i > @container[-2].to_i
+        #elsif @container[-1].to_i > @container[-2].to_i
         @player_1.move_down
 
 
@@ -173,34 +196,14 @@ class Game < Window
       if @player_1.hits?(@ball)
 
         @container2 << @player_1.y
+        @container2.slice! -50..-1
+        p @container2
 
-=begin
 
-        case when @container2.count == 0
-               @ball.switch_direction(@ball.y - @player_1.y)
-               @player_1.increment_score
-        end
-
-        case when @container2.count == 1
-               @ball.switch_direction(@ball.y - @player_1.y)
-               @player_1.increment_score
-        end
-        case when @container2.count == 2
-            if @container2[-1] == @container2[-2]
-              @ball.switch_direction_slightly(@ball.y  - @player_1.y)
-              #@player_1.move_slightly
-
-            else
-              @ball.switch_direction(@ball.y - @player_1.y)
-              @player_1.increment_score
-            end
-            end
-
-=end
         case when
         if @container2[-1] == @container2[-2]
           @ball.switch_direction_slightly(@ball.y  - @player_1.y)
-          #@player_1.move_slightly
+
 
         else
           @ball.switch_direction(@ball.y - @player_1.y)
@@ -212,32 +215,35 @@ class Game < Window
       end
 
 
-      if @ball.x < 0
-        @ball.reset
-        @player_2.increment_score
-        #@state = :stopped
-        GC.start
-        sleep 1.5
 
+
+      if @ball.x < 0
+        @ball2.update
       end
 
+      case
+        when @ball2.x < 1
+          @ball.reset
+          @ball.update
+          @ball2.reset
+          @player_2.increment_score
+      end
+
+
+
       @ball.update
-    #elsif @state == :stopped
-     # if button_down?(KbSpace)
-        #@players.each(&:reset)
-        #@ball.reset
-        #@state = :in_play
-     #end
+
+
     end
   end
 
   def draw
     @score_card.draw(@players)
     @ball.draw
+    @ball2.draw
     @player_1.draw
-    #@player_2.draw
-  end
 
+  end
 
 end
 Game.new.show
